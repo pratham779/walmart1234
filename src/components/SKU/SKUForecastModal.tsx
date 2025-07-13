@@ -152,299 +152,301 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
           {isLoading ? (
             <LoadingShimmer type="modal" />
           ) : (
-          {selectedTab === 'overview' && (
             <>
-              {/* Current Risk Overview */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                  <div className="flex items-center space-x-2">
-                    <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">Annual Spend</span>
-                  </div>
-                  <p className="text-lg sm:text-2xl font-bold text-gray-900 mt-1">
-                    ${(sku.spend / 1000000).toFixed(1)}M
-                  </p>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                  <div className="flex items-center space-x-2">
-                    <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">Total Risk Score</span>
-                  </div>
-                  <p className="text-lg sm:text-2xl font-bold text-gray-900 mt-1">{sku.totalRisk}</p>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                  <div className="flex items-center space-x-2">
-                    <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">Current Action</span>
-                  </div>
-                  <div className="mt-2">
-                    <ActionPill action={sku.action} />
-                  </div>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                  <div className="flex items-center space-x-2">
-                    <Package className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
-                    <span className="text-xs sm:text-sm font-medium text-gray-600">Current Margin</span>
-                  </div>
-                  <p className="text-lg sm:text-2xl font-bold text-green-600 mt-1">{sku.currentMargin.toFixed(1)}%</p>
-                </div>
-              </div>
-
-              {/* Charts Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                {/* Primary Chart - Tariff/Margin History */}
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
-                    {sku.isDomestic ? 'Margin History' : 'Tariff Rate History'}
-                  </h3>
-                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                    <TariffChart 
-                      data={sku.isDomestic ? mockMarginData.domestic : getChartData()} 
-                      height={200}
-                      title={sku.isDomestic ? 'Margin %' : 'Tariff Rate %'}
-                      color={sku.isDomestic ? '#10b981' : '#0071ce'}
-                    />
-                  </div>
-                </div>
-
-                {/* Secondary Chart - Quality Score */}
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Quality Score Trends</h3>
-                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                    <TariffChart 
-                      data={sku.isDomestic ? mockQualityData.domestic : mockQualityData.international} 
-                      height={200}
-                      title="Quality Score"
-                      color="#8b5cf6"
-                    />
-                  </div>
-                </div>
-
-                {/* Third Chart - Logistics Cost */}
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Logistics Cost Trends</h3>
-                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                    <TariffChart 
-                      data={sku.isDomestic ? mockLogisticsData.domestic : mockLogisticsData.international} 
-                      height={200}
-                      title="Logistics Cost %"
-                      color="#f59e0b"
-                    />
-                  </div>
-                </div>
-
-                {/* Fourth Chart - Supplier Capacity */}
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Supplier Capacity Utilization</h3>
-                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                    <TariffChart 
-                      data={sku.isDomestic ? mockCapacityData.domestic : mockCapacityData.international} 
-                      height={200}
-                      title="Capacity %"
-                      color="#06b6d4"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Scenario Planning */}
-              {!sku.isDomestic && (
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Scenario Planning</h3>
-                  <div className="bg-blue-50 rounded-lg p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
-                      <label className="text-sm font-medium text-gray-700">
-                        Simulate Tariff Increase:
-                      </label>
-                      <input
-                        type="range"
-                        min="5"
-                        max="20"
-                        step="1"
-                        value={tariffIncrease}
-                        onChange={(e) => setTariffIncrease(parseInt(e.target.value))}
-                        className="flex-1"
-                      />
-                      <span className="text-sm font-semibold text-blue-700 w-12">
-                        +{tariffIncrease}%
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="bg-white rounded-lg p-4">
-                        <p className="text-sm text-gray-600">Projected Annual Loss</p>
-                        <p className="text-xl sm:text-2xl font-bold text-red-600">
-                          ${(parseInt(projectedLoss) / 1000000).toFixed(1)}M
-                        </p>
+              {selectedTab === 'overview' && (
+                <>
+                  {/* Current Risk Overview */}
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                      <div className="flex items-center space-x-2">
+                        <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-600">Annual Spend</span>
                       </div>
-                      <div className="bg-white rounded-lg p-4">
-                        <p className="text-sm text-gray-600">Margin Impact</p>
-                        <p className="text-xl sm:text-2xl font-bold text-red-600">
-                          -{tariffIncrease.toFixed(1)}%
-                        </p>
+                      <p className="text-lg sm:text-2xl font-bold text-gray-900 mt-1">
+                        ${(sku.spend / 1000000).toFixed(1)}M
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                      <div className="flex items-center space-x-2">
+                        <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-600">Total Risk Score</span>
+                      </div>
+                      <p className="text-lg sm:text-2xl font-bold text-gray-900 mt-1">{sku.totalRisk}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                      <div className="flex items-center space-x-2">
+                        <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-600">Current Action</span>
+                      </div>
+                      <div className="mt-2">
+                        <ActionPill action={sku.action} />
+                      </div>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                      <div className="flex items-center space-x-2">
+                        <Package className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                        <span className="text-xs sm:text-sm font-medium text-gray-600">Current Margin</span>
+                      </div>
+                      <p className="text-lg sm:text-2xl font-bold text-green-600 mt-1">{sku.currentMargin.toFixed(1)}%</p>
+                    </div>
+                  </div>
+
+                  {/* Charts Section */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    {/* Primary Chart - Tariff/Margin History */}
+                    <div>
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
+                        {sku.isDomestic ? 'Margin History' : 'Tariff Rate History'}
+                      </h3>
+                      <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                        <TariffChart 
+                          data={sku.isDomestic ? mockMarginData.domestic : getChartData()} 
+                          height={200}
+                          title={sku.isDomestic ? 'Margin %' : 'Tariff Rate %'}
+                          color={sku.isDomestic ? '#10b981' : '#0071ce'}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Secondary Chart - Quality Score */}
+                    <div>
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Quality Score Trends</h3>
+                      <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                        <TariffChart 
+                          data={sku.isDomestic ? mockQualityData.domestic : mockQualityData.international} 
+                          height={200}
+                          title="Quality Score"
+                          color="#8b5cf6"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Third Chart - Logistics Cost */}
+                    <div>
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Logistics Cost Trends</h3>
+                      <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                        <TariffChart 
+                          data={sku.isDomestic ? mockLogisticsData.domestic : mockLogisticsData.international} 
+                          height={200}
+                          title="Logistics Cost %"
+                          color="#f59e0b"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Fourth Chart - Supplier Capacity */}
+                    <div>
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Supplier Capacity Utilization</h3>
+                      <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                        <TariffChart 
+                          data={sku.isDomestic ? mockCapacityData.domestic : mockCapacityData.international} 
+                          height={200}
+                          title="Capacity %"
+                          color="#06b6d4"
+                        />
                       </div>
                     </div>
                   </div>
+
+                  {/* Scenario Planning */}
+                  {!sku.isDomestic && (
+                    <div>
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Scenario Planning</h3>
+                      <div className="bg-blue-50 rounded-lg p-4 sm:p-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
+                          <label className="text-sm font-medium text-gray-700">
+                            Simulate Tariff Increase:
+                          </label>
+                          <input
+                            type="range"
+                            min="5"
+                            max="20"
+                            step="1"
+                            value={tariffIncrease}
+                            onChange={(e) => setTariffIncrease(parseInt(e.target.value))}
+                            className="flex-1"
+                          />
+                          <span className="text-sm font-semibold text-blue-700 w-12">
+                            +{tariffIncrease}%
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="bg-white rounded-lg p-4">
+                            <p className="text-sm text-gray-600">Projected Annual Loss</p>
+                            <p className="text-xl sm:text-2xl font-bold text-red-600">
+                              ${(parseInt(projectedLoss) / 1000000).toFixed(1)}M
+                            </p>
+                          </div>
+                          <div className="bg-white rounded-lg p-4">
+                            <p className="text-sm text-gray-600">Margin Impact</p>
+                            <p className="text-xl sm:text-2xl font-bold text-red-600">
+                              -{tariffIncrease.toFixed(1)}%
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {selectedTab === 'alternatives' && (
+                <div>
+                  {relevantSuppliers.length > 0 ? (
+                    <>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900">Alternative Sourcing Options</h3>
+                        <span className="text-sm text-gray-600">
+                          {relevantSuppliers.length} alternatives available
+                        </span>
+                      </div>
+                      
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                              <tr>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Supplier Location
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Type
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Margin Impact
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Annual Savings
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Tariff Rate
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Transit Time
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Quality Score
+                                </th>
+                                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Sustainability
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                              {relevantSuppliers.map((supplier) => {
+                                const annualSavings = calculateAnnualSavings(supplier);
+                                return (
+                                  <tr
+                                    key={supplier.id}
+                                    className={supplier.isRecommended ? 'bg-green-50' : ''}
+                                  >
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                      <div className="flex items-center">
+                                        {supplier.isRecommended && (
+                                          <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                                        )}
+                                        <div>
+                                          <span className="text-sm font-medium text-gray-900">
+                                            {supplier.country}
+                                          </span>
+                                          <p className="text-xs text-gray-500">{supplier.supplierName}</p>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSupplierTypeColor(supplier.supplierType)}`}>
+                                        {getSupplierTypeLabel(supplier.supplierType)}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                      <span className={`text-sm font-medium ${getMarginColor(supplier.marginChange)}`}>
+                                        {supplier.marginChange > 0 ? '+' : ''}{supplier.marginChange.toFixed(1)}%
+                                      </span>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                      <span className={`text-sm font-medium ${getMarginColor(annualSavings)}`}>
+                                        {formatCurrency(annualSavings)}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                      {supplier.tariffRate.toFixed(1)}%
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                      <div className="flex items-center space-x-1">
+                                        <Clock className="h-4 w-4 text-gray-400" />
+                                        <span className="text-sm text-gray-900">{supplier.transitDays} days</span>
+                                      </div>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                      <div className="flex items-center">
+                                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                                          <div
+                                            className="bg-blue-600 h-2 rounded-full"
+                                            style={{ width: `${supplier.qualityScore}%` }}
+                                          ></div>
+                                        </div>
+                                        <span className="ml-2 text-sm text-gray-600">
+                                          {supplier.qualityScore}
+                                        </span>
+                                      </div>
+                                    </td>
+                                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                      <div className="flex items-center space-x-2">
+                                        <Leaf className={`h-4 w-4 ${
+                                          (supplier.sustainabilityScore || 75) >= 85 ? 'text-green-500' : 
+                                          (supplier.sustainabilityScore || 75) >= 70 ? 'text-yellow-500' : 'text-red-500'
+                                        }`} />
+                                        <span className="text-sm text-gray-900">
+                                          {supplier.sustainabilityScore || 75}
+                                        </span>
+                                        <span className="text-xs text-gray-500">
+                                          ({supplier.carbonFootprint || '5.2'}t CO₂)
+                                        </span>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      
+                      {/* Recommendations */}
+                      <div className="mt-6 bg-blue-50 rounded-lg p-4">
+                        <h4 className="text-md font-semibold text-blue-900 mb-2">Sourcing Recommendations</h4>
+                        <div className="space-y-2 text-sm text-blue-800">
+                          {sku.isDomestic ? (
+                            <p>• Current domestic sourcing is optimal with no tariff exposure and good margins</p>
+                          ) : (
+                            <>
+                              <p>• Consider shifting to domestic suppliers to eliminate tariff risk and improve margins</p>
+                              <p>• NAFTA suppliers offer a good balance of cost and reduced tariff exposure</p>
+                              <p>• Monitor current international suppliers for further tariff increases</p>
+                              <p>• Prioritize suppliers with high sustainability scores to meet environmental goals</p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-12">
+                      <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-green-600 mb-2">Current Sourcing is Optimal</h3>
+                      <p className="text-gray-600 mb-4">
+                        This SKU has a low risk score ({sku.totalRisk}) and doesn't require alternative sourcing at this time.
+                      </p>
+                      <div className="bg-green-50 rounded-lg p-4 max-w-md mx-auto">
+                        <p className="text-sm text-green-800">
+                          <strong>Current Status:</strong> {sku.isDomestic ? 'Domestic sourcing' : 'Low-risk international sourcing'} 
+                          with {sku.currentMargin.toFixed(1)}% margin and minimal supply chain risk.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </>
-          )}
-
-          {selectedTab === 'alternatives' && (
-            <div>
-              {relevantSuppliers.length > 0 ? (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">Alternative Sourcing Options</h3>
-                    <span className="text-sm text-gray-600">
-                      {relevantSuppliers.length} alternatives available
-                    </span>
-                  </div>
-                  
-                  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Supplier Location
-                            </th>
-                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Type
-                            </th>
-                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Margin Impact
-                            </th>
-                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Annual Savings
-                            </th>
-                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Tariff Rate
-                            </th>
-                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Transit Time
-                            </th>
-                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Quality Score
-                            </th>
-                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Sustainability
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {relevantSuppliers.map((supplier) => {
-                            const annualSavings = calculateAnnualSavings(supplier);
-                            return (
-                              <tr
-                                key={supplier.id}
-                                className={supplier.isRecommended ? 'bg-green-50' : ''}
-                              >
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center">
-                                    {supplier.isRecommended && (
-                                      <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                                    )}
-                                    <div>
-                                      <span className="text-sm font-medium text-gray-900">
-                                        {supplier.country}
-                                      </span>
-                                      <p className="text-xs text-gray-500">{supplier.supplierName}</p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSupplierTypeColor(supplier.supplierType)}`}>
-                                    {getSupplierTypeLabel(supplier.supplierType)}
-                                  </span>
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                  <span className={`text-sm font-medium ${getMarginColor(supplier.marginChange)}`}>
-                                    {supplier.marginChange > 0 ? '+' : ''}{supplier.marginChange.toFixed(1)}%
-                                  </span>
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                  <span className={`text-sm font-medium ${getMarginColor(annualSavings)}`}>
-                                    {formatCurrency(annualSavings)}
-                                  </span>
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {supplier.tariffRate.toFixed(1)}%
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center space-x-1">
-                                    <Clock className="h-4 w-4 text-gray-400" />
-                                    <span className="text-sm text-gray-900">{supplier.transitDays} days</span>
-                                  </div>
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center">
-                                    <div className="w-16 bg-gray-200 rounded-full h-2">
-                                      <div
-                                        className="bg-blue-600 h-2 rounded-full"
-                                        style={{ width: `${supplier.qualityScore}%` }}
-                                      ></div>
-                                    </div>
-                                    <span className="ml-2 text-sm text-gray-600">
-                                      {supplier.qualityScore}
-                                    </span>
-                                  </div>
-                                </td>
-                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center space-x-2">
-                                    <Leaf className={`h-4 w-4 ${
-                                      (supplier.sustainabilityScore || 75) >= 85 ? 'text-green-500' : 
-                                      (supplier.sustainabilityScore || 75) >= 70 ? 'text-yellow-500' : 'text-red-500'
-                                    }`} />
-                                    <span className="text-sm text-gray-900">
-                                      {supplier.sustainabilityScore || 75}
-                                    </span>
-                                    <span className="text-xs text-gray-500">
-                                      ({supplier.carbonFootprint || '5.2'}t CO₂)
-                                    </span>
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  
-                  {/* Recommendations */}
-                  <div className="mt-6 bg-blue-50 rounded-lg p-4">
-                    <h4 className="text-md font-semibold text-blue-900 mb-2">Sourcing Recommendations</h4>
-                    <div className="space-y-2 text-sm text-blue-800">
-                      {sku.isDomestic ? (
-                        <p>• Current domestic sourcing is optimal with no tariff exposure and good margins</p>
-                      ) : (
-                        <>
-                          <p>• Consider shifting to domestic suppliers to eliminate tariff risk and improve margins</p>
-                          <p>• NAFTA suppliers offer a good balance of cost and reduced tariff exposure</p>
-                          <p>• Monitor current international suppliers for further tariff increases</p>
-                          <p>• Prioritize suppliers with high sustainability scores to meet environmental goals</p>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-12">
-                  <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-green-600 mb-2">Current Sourcing is Optimal</h3>
-                  <p className="text-gray-600 mb-4">
-                    This SKU has a low risk score ({sku.totalRisk}) and doesn't require alternative sourcing at this time.
-                  </p>
-                  <div className="bg-green-50 rounded-lg p-4 max-w-md mx-auto">
-                    <p className="text-sm text-green-800">
-                      <strong>Current Status:</strong> {sku.isDomestic ? 'Domestic sourcing' : 'Low-risk international sourcing'} 
-                      with {sku.currentMargin.toFixed(1)}% margin and minimal supply chain risk.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
           )}
         </div>
 
