@@ -207,7 +207,7 @@ const Overview: React.FC = () => {
                   </div>
                 )}
                 
-                {searchTerm.length > 2 && (
+                {searchTerm.length > 2 && searchResults.length === 0 && (
                   <div className="border-t border-gray-200 p-4 bg-blue-50">
                     <p className="text-sm text-blue-700 mb-3 font-medium">
                       New Product Sourcing Options for: "{searchTerm}"
@@ -225,11 +225,20 @@ const Overview: React.FC = () => {
                                 {option.type === 'domestic' ? 'Domestic Sourcing' : 'International Sourcing'}
                               </span>
                               <span className="text-sm font-medium text-gray-900">{option.country}</span>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                option.sustainabilityScore && option.sustainabilityScore >= 85 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : option.sustainabilityScore && option.sustainabilityScore >= 70
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-red-100 text-red-800'
+                              }`}>
+                                Sustainability: {option.sustainabilityScore || 75}
+                              </span>
                             </div>
                             <RiskScore score={option.riskScore} />
                           </div>
                           
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-3">
+                          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-4 mb-3">
                             <div className="flex items-center space-x-1">
                               <Percent className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
                               <span className="text-xs sm:text-sm text-gray-600">Margin:</span>
@@ -252,9 +261,15 @@ const Overview: React.FC = () => {
                                 {option.annualSavings ? formatCurrency(option.annualSavings) : 'N/A'}
                               </span>
                             </div>
+                            <div className="flex items-center space-x-1">
+                              <span className="text-xs sm:text-sm text-gray-600">CO₂:</span>
+                              <span className="text-xs sm:text-sm font-medium text-gray-900">
+                                {option.carbonFootprint || (option.type === 'domestic' ? '2.1' : '8.5')}t
+                              </span>
+                            </div>
                           </div>
                           
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                             <div>
                               <p className="font-medium text-green-700 mb-1">Advantages:</p>
                               <ul className="space-y-1">
@@ -269,6 +284,13 @@ const Overview: React.FC = () => {
                                 {option.disadvantages.slice(0, 2).map((disadvantage, i) => (
                                   <li key={i} className="text-red-600">• {disadvantage}</li>
                                 ))}
+                              </ul>
+                            </div>
+                            <div>
+                              <p className="font-medium text-blue-700 mb-1">Environmental:</p>
+                              <ul className="space-y-1">
+                                <li className="text-blue-600">• Carbon footprint: {option.carbonFootprint || (option.type === 'domestic' ? '2.1' : '8.5')}t CO₂</li>
+                                <li className="text-blue-600">• {option.environmentalImpact || (option.type === 'domestic' ? 'Low shipping emissions' : 'Higher logistics impact')}</li>
                               </ul>
                             </div>
                           </div>
@@ -287,7 +309,7 @@ const Overview: React.FC = () => {
           <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg sm:text-xl font-semibold text-gray-900">High-Risk Categories Requiring Immediate Action</h2>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">
-              Categories with suppliers in high-risk countries that need immediate sourcing review
+              Only categories with risk scores ≥ 70 and requiring 'shift' or 'monitor' actions are shown
             </p>
           </div>
           
@@ -313,7 +335,7 @@ const Overview: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {highRiskCategories.map((category, index) => (
+                {highRiskCategories.filter(category => category.riskScore >= 70 && category.action !== 'maintain').map((category, index) => (
                   <tr key={index} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{category.name}</div>
@@ -344,7 +366,7 @@ const Overview: React.FC = () => {
                     </td>
                   </tr>
                 ))}
-                {highRiskCategories.length === 0 && (
+                {highRiskCategories.filter(category => category.riskScore >= 70 && category.action !== 'maintain').length === 0 && (
                   <tr>
                     <td colSpan={5} className="px-4 sm:px-6 py-8 text-center">
                       <div className="flex flex-col items-center">

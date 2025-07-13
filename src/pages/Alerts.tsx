@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { Bell, Download, Plus, Trash2, Edit3 } from 'lucide-react';
 import { Alert } from '../types';
+import { 
+  exportHighRiskSKUsToCSV, 
+  exportCategoryAnalysisToCSV, 
+  exportSupplierAlternativesToCSV, 
+  generateExecutiveSummaryPDF 
+} from '../utils/exportUtils';
 
 const Alerts: React.FC = () => {
   const [alerts, setAlerts] = useState<Alert[]>([
@@ -95,22 +101,11 @@ const Alerts: React.FC = () => {
   };
 
   const exportToCSV = () => {
-    // Mock CSV export
-    const csvContent = "SKU,Name,Risk Score,Action\nSKU001,Premium Cotton T-Shirt,92,Shift\nSKU008,Smartphone Case,89,Shift";
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'high-risk-skus.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+    exportHighRiskSKUsToCSV();
   };
 
   const exportToPDF = () => {
-    // Mock PDF export
-    alert('PDF export functionality would be implemented with jsPDF and Chart.js integration');
+    generateExecutiveSummaryPDF();
   };
 
   return (
@@ -336,10 +331,16 @@ const Alerts: React.FC = () => {
                   Comprehensive analysis by product category with risk trends
                 </p>
                 <div className="flex space-x-3">
-                  <button className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors text-sm">
+                  <button 
+                    onClick={exportCategoryAnalysisToCSV}
+                    className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors text-sm"
+                  >
                     Export CSV
                   </button>
-                  <button className="bg-white text-yellow-600 border border-yellow-300 px-4 py-2 rounded-lg hover:bg-yellow-50 transition-colors text-sm">
+                  <button 
+                    onClick={generateExecutiveSummaryPDF}
+                    className="bg-white text-yellow-600 border border-yellow-300 px-4 py-2 rounded-lg hover:bg-yellow-50 transition-colors text-sm"
+                  >
                     Export PDF
                   </button>
                 </div>
@@ -354,10 +355,16 @@ const Alerts: React.FC = () => {
                   Alternative supplier recommendations with cost impact analysis
                 </p>
                 <div className="flex space-x-3">
-                  <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                  <button 
+                    onClick={exportSupplierAlternativesToCSV}
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                  >
                     Export CSV
                   </button>
-                  <button className="bg-white text-green-600 border border-green-300 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors text-sm">
+                  <button 
+                    onClick={generateExecutiveSummaryPDF}
+                    className="bg-white text-green-600 border border-green-300 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors text-sm"
+                  >
                     Export PDF
                   </button>
                 </div>
@@ -372,10 +379,16 @@ const Alerts: React.FC = () => {
                   High-level summary with charts and recommendations for leadership
                 </p>
                 <div className="flex space-x-3">
-                  <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm">
+                  <button 
+                    onClick={generateExecutiveSummaryPDF}
+                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                  >
                     Export PDF
                   </button>
-                  <button className="bg-white text-purple-600 border border-purple-300 px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors text-sm">
+                  <button 
+                    onClick={() => alert('Email scheduling feature would integrate with Walmart\'s internal email system')}
+                    className="bg-white text-purple-600 border border-purple-300 px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors text-sm"
+                  >
                     Schedule Email
                   </button>
                 </div>

@@ -41,6 +41,9 @@ export interface Supplier {
   costPerUnit: number;
   annualSavings?: number;
   marginIncrease?: number;
+  sustainabilityScore?: number;
+  carbonFootprint?: number;
+  environmentalRating?: 'A' | 'B' | 'C' | 'D';
 }
 
 export interface TariffData {
@@ -72,4 +75,7 @@ export interface NewSKUOption {
   capacity: string;
   annualSavings?: number;
   marginIncrease?: number;
+  sustainabilityScore?: number;
+  carbonFootprint?: number;
+  environmentalImpact?: string;
 }

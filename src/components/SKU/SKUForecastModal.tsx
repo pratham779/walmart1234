@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { X, TrendingUp, Globe, DollarSign, Package, Clock, Truck, AlertTriangle, CheckCircle } from 'lucide-react';
+import { X, TrendingUp, Globe, DollarSign, Package, Clock, Truck, AlertTriangle, CheckCircle, Leaf } from 'lucide-react';
 import { SKU, Supplier } from '../../types';
 import { mockTariffData, mockSuppliers, mockMarginData, mockLogisticsData, mockQualityData, mockCapacityData } from '../../data/mockData';
 import TariffChart from '../Charts/TariffChart';
 import ActionPill from '../Common/ActionPill';
+import LoadingShimmer from '../Common/LoadingShimmer';
+import { generateSourcingReportPDF } from '../../utils/exportUtils';
 
 interface SKUForecastModalProps {
   sku: SKU;
@@ -14,6 +16,16 @@ interface SKUForecastModalProps {
 const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClose }) => {
   const [tariffIncrease, setTariffIncrease] = useState(5);
   const [selectedTab, setSelectedTab] = useState<'overview' | 'alternatives'>('overview');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading
+  React.useEffect(() => {
+    if (isOpen) {
+      setIsLoading(true);
+      const timer = setTimeout(() => setIsLoading(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -131,12 +143,15 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
-              Sourcing Alternatives ({relevantSuppliers.length})
+              {sku.totalRisk >= 60 ? `Sourcing Alternatives (${relevantSuppliers.length})` : 'Sourcing Analysis'}
             </button>
           </nav>
         </div>
 
-        <div className="p-4 sm:p-6 space-y-6 sm:space-y-8">
+        <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 min-h-[500px]">
+          {isLoading ? (
+            <LoadingShimmer type="modal" />
+          ) : (
           {selectedTab === 'overview' && (
             <>
               {/* Current Risk Overview */}
@@ -311,6 +326,9 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
                             <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Quality Score
                             </th>
+                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Sustainability
+                            </th>
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -371,6 +389,20 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
                                     </span>
                                   </div>
                                 </td>
+                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center space-x-2">
+                                    <Leaf className={`h-4 w-4 ${
+                                      (supplier.sustainabilityScore || 75) >= 85 ? 'text-green-500' : 
+                                      (supplier.sustainabilityScore || 75) >= 70 ? 'text-yellow-500' : 'text-red-500'
+                                    }`} />
+                                    <span className="text-sm text-gray-900">
+                                      {supplier.sustainabilityScore || 75}
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                      ({supplier.carbonFootprint || '5.2'}t CO₂)
+                                    </span>
+                                  </div>
+                                </td>
                               </tr>
                             );
                           })}
@@ -390,6 +422,7 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
                           <p>• Consider shifting to domestic suppliers to eliminate tariff risk and improve margins</p>
                           <p>• NAFTA suppliers offer a good balance of cost and reduced tariff exposure</p>
                           <p>• Monitor current international suppliers for further tariff increases</p>
+                          <p>• Prioritize suppliers with high sustainability scores to meet environmental goals</p>
                         </>
                       )}
                     </div>
@@ -412,6 +445,7 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
               )}
             </div>
           )}
+          )}
         </div>
 
         {/* Footer */}
@@ -422,7 +456,10 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
           >
             Close
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 transition-colors">
+          <button 
+            onClick={() => generateSourcingReportPDF(sku)}
+            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 transition-colors"
+          >
             Generate Sourcing Report
           </button>
         </div>

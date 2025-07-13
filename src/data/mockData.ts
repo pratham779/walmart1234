@@ -4,7 +4,7 @@ export const mockSKUs: SKU[] = [
   // Electronics - Real Walmart SKUs with realistic sourcing
   {
     id: 'WM001',
-    name: 'Samsung 65" 4K Smart TV',
+    name: 'Samsung 65" 4K Smart TV (UN65TU8000)',
     category: 'Electronics',
     origin: 'South Korea',
     spend: 45000000,
@@ -20,7 +20,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM002',
-    name: 'Apple iPhone 15 Pro',
+    name: 'Apple iPhone 15 Pro 128GB',
     category: 'Electronics',
     origin: 'China',
     spend: 125000000,
@@ -36,7 +36,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM003',
-    name: 'HP Pavilion Laptop',
+    name: 'HP Pavilion 15.6" Laptop (Intel i5)',
     category: 'Electronics',
     origin: 'United States',
     spend: 32000000,
@@ -52,7 +52,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM004',
-    name: 'onn. Wireless Bluetooth Earbuds',
+    name: 'onn. True Wireless Bluetooth Earbuds',
     category: 'Electronics',
     origin: 'China',
     spend: 18000000,
@@ -70,7 +70,7 @@ export const mockSKUs: SKU[] = [
   // Apparel - Real Walmart clothing items
   {
     id: 'WM005',
-    name: 'Great Value Cotton T-Shirt',
+    name: 'Great Value Men\'s Cotton T-Shirt 3-Pack',
     category: 'Apparel',
     origin: 'China',
     spend: 25000000,
@@ -86,7 +86,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM006',
-    name: 'Athletic Works Running Shoes',
+    name: 'Athletic Works Men\'s Running Shoes',
     category: 'Apparel',
     origin: 'Vietnam',
     spend: 19500000,
@@ -102,7 +102,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM007',
-    name: 'Faded Glory Denim Jeans',
+    name: 'Faded Glory Men\'s Regular Fit Jeans',
     category: 'Apparel',
     origin: 'Bangladesh',
     spend: 35000000,
@@ -118,7 +118,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM008',
-    name: 'Hanes Underwear 6-Pack',
+    name: 'Hanes Men\'s Boxer Briefs 6-Pack',
     category: 'Apparel',
     origin: 'United States',
     spend: 12000000,
@@ -136,7 +136,7 @@ export const mockSKUs: SKU[] = [
   // Home & Garden - Walmart home products
   {
     id: 'WM009',
-    name: 'Mainstays Kitchen Knife Set',
+    name: 'Mainstays 14-Piece Kitchen Knife Set',
     category: 'Home & Garden',
     origin: 'China',
     spend: 9500000,
@@ -152,7 +152,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM010',
-    name: 'Better Homes Dinnerware Set',
+    name: 'Better Homes & Gardens 16-Piece Dinnerware Set',
     category: 'Home & Garden',
     origin: 'Turkey',
     spend: 12000000,
@@ -168,7 +168,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM011',
-    name: 'Ozark Trail Camping Tent',
+    name: 'Ozark Trail 4-Person Dome Tent',
     category: 'Home & Garden',
     origin: 'United States',
     spend: 14500000,
@@ -186,7 +186,7 @@ export const mockSKUs: SKU[] = [
   // Food & Beverage - Walmart grocery items
   {
     id: 'WM012',
-    name: 'Great Value Organic Pasta',
+    name: 'Great Value Organic Whole Wheat Pasta',
     category: 'Food & Beverage',
     origin: 'United States',
     spend: 15000000,
@@ -202,7 +202,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM013',
-    name: 'Great Value Coffee Beans',
+    name: 'Great Value Colombian Coffee Beans 2lb',
     category: 'Food & Beverage',
     origin: 'Colombia',
     spend: 18500000,
@@ -218,7 +218,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM014',
-    name: 'Great Value Frozen Vegetables',
+    name: 'Great Value Frozen Mixed Vegetables 32oz',
     category: 'Food & Beverage',
     origin: 'Mexico',
     spend: 28000000,
@@ -236,7 +236,7 @@ export const mockSKUs: SKU[] = [
   // Automotive - Walmart auto products
   {
     id: 'WM015',
-    name: 'SuperTech Motor Oil 5W-30',
+    name: 'SuperTech Full Synthetic Motor Oil 5W-30 5qt',
     category: 'Automotive',
     origin: 'United States',
     spend: 35000000,
@@ -252,7 +252,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM016',
-    name: 'EverStart Car Battery',
+    name: 'EverStart Maxx Lead Acid Automotive Battery',
     category: 'Automotive',
     origin: 'South Korea',
     spend: 22000000,
@@ -268,7 +268,7 @@ export const mockSKUs: SKU[] = [
   },
   {
     id: 'WM017',
-    name: 'Douglas All-Season Tires',
+    name: 'Douglas All-Season Tire 225/60R16',
     category: 'Automotive',
     origin: 'China',
     spend: 18500000,
@@ -337,7 +337,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 98,
     costPerUnit: 12.50,
     annualSavings: 2500000,
-    marginIncrease: 2.5
+    marginIncrease: 2.5,
+    sustainabilityScore: 92,
+    carbonFootprint: 2.1,
+    environmentalRating: 'A' as const
   },
   {
     id: 'SUP002',
@@ -355,7 +358,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 96,
     costPerUnit: 13.20,
     annualSavings: 1800000,
-    marginIncrease: 1.8
+    marginIncrease: 1.8,
+    sustainabilityScore: 89,
+    carbonFootprint: 2.8,
+    environmentalRating: 'A' as const
   },
   {
     id: 'SUP003',
@@ -373,7 +379,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 99,
     costPerUnit: 11.80,
     annualSavings: 3200000,
-    marginIncrease: 3.2
+    marginIncrease: 3.2,
+    sustainabilityScore: 95,
+    carbonFootprint: 1.9,
+    environmentalRating: 'A' as const
   },
   // NAFTA/USMCA suppliers (low tariff)
   {
@@ -392,7 +401,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 89,
     costPerUnit: 9.80,
     annualSavings: 500000,
-    marginIncrease: 0.5
+    marginIncrease: 0.5,
+    sustainabilityScore: 78,
+    carbonFootprint: 4.2,
+    environmentalRating: 'B' as const
   },
   {
     id: 'SUP005',
@@ -410,7 +422,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 94,
     costPerUnit: 11.20,
     annualSavings: 1200000,
-    marginIncrease: 1.2
+    marginIncrease: 1.2,
+    sustainabilityScore: 85,
+    carbonFootprint: 3.1,
+    environmentalRating: 'B' as const
   },
   // International alternatives (higher risk/tariff)
   {
@@ -429,7 +444,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 85,
     costPerUnit: 7.50,
     annualSavings: -2500000,
-    marginIncrease: -2.5
+    marginIncrease: -2.5,
+    sustainabilityScore: 68,
+    carbonFootprint: 8.5,
+    environmentalRating: 'C' as const
   },
   {
     id: 'SUP007',
@@ -447,7 +465,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 78,
     costPerUnit: 8.20,
     annualSavings: -1800000,
-    marginIncrease: -1.8
+    marginIncrease: -1.8,
+    sustainabilityScore: 65,
+    carbonFootprint: 9.2,
+    environmentalRating: 'C' as const
   },
   {
     id: 'SUP008',
@@ -465,7 +486,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 72,
     costPerUnit: 6.80,
     annualSavings: -3200000,
-    marginIncrease: -3.2
+    marginIncrease: -3.2,
+    sustainabilityScore: 58,
+    carbonFootprint: 12.1,
+    environmentalRating: 'D' as const
   },
   {
     id: 'SUP009',
@@ -483,7 +507,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 82,
     costPerUnit: 9.20,
     annualSavings: -800000,
-    marginIncrease: -0.8
+    marginIncrease: -0.8,
+    sustainabilityScore: 72,
+    carbonFootprint: 6.8,
+    environmentalRating: 'B' as const
   },
   {
     id: 'SUP010',
@@ -501,7 +528,10 @@ export const mockSuppliers: Supplier[] = [
     qualityScore: 88,
     costPerUnit: 6.20,
     annualSavings: -4500000,
-    marginIncrease: -4.5
+    marginIncrease: -4.5,
+    sustainabilityScore: 62,
+    carbonFootprint: 11.5,
+    environmentalRating: 'C' as const
   }
 ];
 

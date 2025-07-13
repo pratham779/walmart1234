@@ -5,6 +5,7 @@ import { SKU } from '../types';
 import ActionPill from '../components/Common/ActionPill';
 import RiskScore from '../components/Common/RiskScore';
 import SKUForecastModal from '../components/SKU/SKUForecastModal';
+import LoadingShimmer from '../components/Common/LoadingShimmer';
 
 const Dashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +15,13 @@ const Dashboard: React.FC = () => {
   const [selectedSKU, setSelectedSKU] = useState<SKU | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredAndSortedSKUs = useMemo(() => {
     let filtered = mockSKUs.filter(sku => {
@@ -113,7 +121,10 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* SKU Table */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+      {isLoading ? (
+        <LoadingShimmer type="table" rows={10} />
+      ) : (
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -290,6 +301,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* SKU Forecast Modal */}
       {selectedSKU && (
