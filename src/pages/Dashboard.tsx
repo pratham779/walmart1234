@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
 
   // Simulate loading
   React.useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 1000);
+    const timer = setTimeout(() => setIsLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
 
@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
 
       {/* SKU Table */}
       {isLoading ? (
-        <LoadingShimmer type="table" rows={10} />
+        <LoadingShimmer type="dashboard-table" />
       ) : (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">

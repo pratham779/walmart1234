@@ -13,6 +13,11 @@ export interface SKU {
   domesticAvailable: boolean;
   currentSupplier: string;
   hsCode: string;
+  sustainabilityScore?: number;
+  carbonFootprint?: number;
+  environmentalRating?: 'A' | 'B' | 'C' | 'D';
+  qualityScore?: number;
+  transitDays?: number;
 }
 
 export interface Category {

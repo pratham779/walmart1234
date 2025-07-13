@@ -3,6 +3,7 @@ import { Search, Package, AlertTriangle, DollarSign, TrendingDown, MapPin, Clock
 import ActionPill from '../components/Common/ActionPill';
 import RiskScore from '../components/Common/RiskScore';
 import SKUForecastModal from '../components/SKU/SKUForecastModal';
+import LoadingShimmer from '../components/Common/LoadingShimmer';
 import { mockCategories, mockSKUs, mockSuppliers } from '../data/mockData';
 import { SKU, NewSKUOption } from '../types';
 
@@ -11,7 +12,20 @@ const Overview: React.FC = () => {
   const [selectedSKU, setSelectedSKU] = useState<SKU | null>(null);
   const [searchResults, setSearchResults] = useState<SKU[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isLoadingKPIs, setIsLoadingKPIs] = useState(true);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Simulate loading for KPIs and categories
+  useEffect(() => {
+    const kpiTimer = setTimeout(() => setIsLoadingKPIs(false), 800);
+    const categoryTimer = setTimeout(() => setIsLoadingCategories(false), 1200);
+    return () => {
+      clearTimeout(kpiTimer);
+      clearTimeout(categoryTimer);
+    };
+  }, []);
 
   const totalSKUs = mockSKUs.length;
   const highRiskPercentage = Math.round((mockSKUs.filter(sku => sku.totalRisk >= 80).length / totalSKUs) * 100);
@@ -35,6 +49,9 @@ const Overview: React.FC = () => {
   const handleSearch = (term: string) => {
     setSearchTerm(term);
     if (term.length > 2) {
+      setIsSearching(true);
+      // Simulate search delay
+      setTimeout(() => {
       const results = mockSKUs.filter(sku => 
         sku.name.toLowerCase().includes(term.toLowerCase()) ||
         sku.category.toLowerCase().includes(term.toLowerCase()) ||
@@ -42,9 +59,12 @@ const Overview: React.FC = () => {
       );
       setSearchResults(results);
       setShowResults(true);
+        setIsSearching(false);
+      }, 600); // Simulate search processing time
     } else {
       setShowResults(false);
       setSearchResults([]);
+      setIsSearching(false);
     }
   };
 
@@ -165,9 +185,11 @@ const Overview: React.FC = () => {
             />
             
             {/* Search Results Dropdown */}
-            {showResults && (
+            {(showResults || isSearching) && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto">
-                {searchResults.length > 0 && (
+                {isSearching ? (
+                  <LoadingShimmer type="search-results" />
+                ) : searchResults.length > 0 ? (
                   <div className="p-2">
                     <p className="text-xs text-gray-500 mb-2 px-2">Found {searchResults.length} existing SKUs:</p>
                     {searchResults.map((sku) => (
@@ -205,9 +227,7 @@ const Overview: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                )}
-                
-                {searchTerm.length > 2 && searchResults.length === 0 && (
+                ) : searchTerm.length > 2 && searchResults.length === 0 ? (
                   <div className="border-t border-gray-200 p-4 bg-blue-50">
                     <p className="text-sm text-blue-700 mb-3 font-medium">
                       New Product Sourcing Options for: "{searchTerm}"
@@ -298,92 +318,99 @@ const Overview: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             )}
           </div>
         </div>
 
         {/* High Risk Categories Table */}
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6 sm:mb-8">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">High-Risk Categories Requiring Immediate Action</h2>
-            <p className="text-xs sm:text-sm text-gray-600 mt-1">
-              Only categories with risk scores ≥ 70 and requiring 'shift' or 'monitor' actions are shown
-            </p>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    High-Risk Countries
-                  </th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Risk Score
-                  </th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    $ at Risk
-                  </th>
-                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Action Required
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {highRiskCategories.filter(category => category.riskScore >= 70 && category.action !== 'maintain').map((category, index) => (
-                  <tr key={index} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{category.name}</div>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {category.highRiskCountries.map((country, idx) => (
-                          <span
-                            key={idx}
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
-                          >
-                            <AlertTriangle className="h-3 w-3 mr-1" />
-                            {country}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <RiskScore score={category.riskScore} showLabel />
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        ${(category.amountAtRisk / 1000000).toFixed(1)}M
-                      </div>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                      <ActionPill action={category.action} />
-                    </td>
-                  </tr>
-                ))}
-                {highRiskCategories.filter(category => category.riskScore >= 70 && category.action !== 'maintain').length === 0 && (
+        {isLoadingCategories ? (
+          <LoadingShimmer type="category-table" className="mb-6 sm:mb-8" />
+        ) : (
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6 sm:mb-8">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">High-Risk Categories Requiring Immediate Action</h2>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                Only categories with risk scores ≥ 70 and requiring 'shift' or 'monitor' actions are shown
+              </p>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <td colSpan={5} className="px-4 sm:px-6 py-8 text-center">
-                      <div className="flex flex-col items-center">
-                        <Package className="h-12 w-12 text-green-400 mb-4" />
-                        <p className="text-lg font-medium text-green-600">All Categories Low Risk</p>
-                        <p className="text-sm text-gray-500">No categories currently have high-risk country exposure</p>
-                      </div>
-                    </td>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      High-Risk Countries
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Risk Score
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      $ at Risk
+                    </th>
+                    <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Action Required
+                    </th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {highRiskCategories.filter(category => category.riskScore >= 70 && category.action !== 'maintain').map((category, index) => (
+                    <tr key={index} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{category.name}</div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {category.highRiskCountries.map((country, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                            >
+                              <AlertTriangle className="h-3 w-3 mr-1" />
+                              {country}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <RiskScore score={category.riskScore} showLabel />
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          ${(category.amountAtRisk / 1000000).toFixed(1)}M
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                        <ActionPill action={category.action} />
+                      </td>
+                    </tr>
+                  ))}
+                  {highRiskCategories.filter(category => category.riskScore >= 70 && category.action !== 'maintain').length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-4 sm:px-6 py-8 text-center">
+                        <div className="flex flex-col items-center">
+                          <Package className="h-12 w-12 text-green-400 mb-4" />
+                          <p className="text-lg font-medium text-green-600">All Categories Low Risk</p>
+                          <p className="text-sm text-gray-500">No categories currently have high-risk country exposure</p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {isLoadingKPIs ? (
+          <LoadingShimmer type="kpi-cards" />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -447,7 +474,8 @@ const Overview: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        )}
 
         {/* SKU Forecast Modal */}
         {selectedSKU && (
