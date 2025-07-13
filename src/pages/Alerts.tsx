@@ -311,13 +311,13 @@ const Alerts: React.FC = () => {
                     onClick={exportToCSV}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
                   >
-                    Export CSV
+                    Export Detailed CSV
                   </button>
                   <button
                     onClick={exportToPDF}
                     className="bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors text-sm"
                   >
-                    Export PDF
+                    Export Comprehensive PDF
                   </button>
                 </div>
               </div>
@@ -335,13 +335,13 @@ const Alerts: React.FC = () => {
                     onClick={exportCategoryAnalysisToCSV}
                     className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors text-sm"
                   >
-                    Export CSV
+                    Export Detailed CSV
                   </button>
                   <button 
                     onClick={generateExecutiveSummaryPDF}
                     className="bg-white text-yellow-600 border border-yellow-300 px-4 py-2 rounded-lg hover:bg-yellow-50 transition-colors text-sm"
                   >
-                    Export PDF
+                    Export Analysis PDF
                   </button>
                 </div>
               </div>
@@ -359,13 +359,13 @@ const Alerts: React.FC = () => {
                     onClick={exportSupplierAlternativesToCSV}
                     className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
                   >
-                    Export CSV
+                    Export Detailed CSV
                   </button>
                   <button 
                     onClick={generateExecutiveSummaryPDF}
                     className="bg-white text-green-600 border border-green-300 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors text-sm"
                   >
-                    Export PDF
+                    Export Strategy PDF
                   </button>
                 </div>
               </div>
@@ -383,7 +383,7 @@ const Alerts: React.FC = () => {
                     onClick={generateExecutiveSummaryPDF}
                     className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors text-sm"
                   >
-                    Export PDF
+                    Export Executive PDF
                   </button>
                   <button 
                     onClick={() => alert('Email scheduling feature would integrate with Walmart\'s internal email system')}

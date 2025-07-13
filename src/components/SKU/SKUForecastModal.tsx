@@ -22,7 +22,7 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
   React.useEffect(() => {
     if (isOpen) {
       setIsLoading(true);
-      const timer = setTimeout(() => setIsLoading(false), 1500);
+      const timer = setTimeout(() => setIsLoading(false), 2000); // Longer loading for complex analysis
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -428,6 +428,112 @@ const SKUForecastModal: React.FC<SKUForecastModalProps> = ({ sku, isOpen, onClos
                           )}
                         </div>
                       </div>
+
+                      {/* Alternative Sourcing Section for High/Medium Risk SKUs */}
+                      {sku.totalRisk >= 60 && relevantSuppliers.length > 0 && (
+                        <div className="mt-8 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6 border border-yellow-200">
+                          <h4 className="text-lg font-semibold text-orange-900 mb-4 flex items-center">
+                            <AlertTriangle className="h-5 w-5 mr-2" />
+                            Recommended Alternative Sourcing Strategy
+                          </h4>
+                          
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Best Overall Option */}
+                            <div className="bg-white rounded-lg p-4 border-2 border-green-200">
+                              <div className="flex items-center mb-3">
+                                <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                                <h5 className="font-semibold text-green-900">Best Overall Choice</h5>
+                              </div>
+                              {relevantSuppliers.slice(0, 1).map(supplier => (
+                                <div key={supplier.id}>
+                                  <p className="font-medium text-gray-900">{supplier.supplierName}</p>
+                                  <p className="text-sm text-gray-600 mb-2">{supplier.country}</p>
+                                  <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                      <span className="text-gray-500">Margin Impact:</span>
+                                      <span className={`ml-1 font-medium ${getMarginColor(supplier.marginChange)}`}>
+                                        {supplier.marginChange > 0 ? '+' : ''}{supplier.marginChange.toFixed(1)}%
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <span className="text-gray-500">Transit:</span>
+                                      <span className="ml-1 font-medium">{supplier.transitDays} days</span>
+                                    </div>
+                                    <div>
+                                      <span className="text-gray-500">Tariff:</span>
+                                      <span className="ml-1 font-medium">{supplier.tariffRate}%</span>
+                                    </div>
+                                    <div>
+                                      <span className="text-gray-500">Sustainability:</span>
+                                      <span className="ml-1 font-medium text-green-600">{supplier.sustainabilityScore || 85}</span>
+                                    </div>
+                                  </div>
+                                  <div className="mt-2 text-xs text-green-700">
+                                    <strong>Annual Savings:</strong> {formatCurrency(calculateAnnualSavings(supplier))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Domestic vs International Comparison */}
+                            <div className="space-y-4">
+                              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                                <h5 className="font-semibold text-green-900 mb-2">Domestic Options</h5>
+                                {relevantSuppliers.filter(s => s.isDomestic).slice(0, 2).map(supplier => (
+                                  <div key={supplier.id} className="mb-2 last:mb-0">
+                                    <p className="text-sm font-medium">{supplier.supplierName}</p>
+                                    <div className="flex justify-between text-xs text-gray-600">
+                                      <span>Logistics: {supplier.logisticsScore}/100</span>
+                                      <span>Margin: {supplier.marginChange > 0 ? '+' : ''}{supplier.marginChange.toFixed(1)}%</span>
+                                    </div>
+                                  </div>
+                                ))}
+                                <p className="text-xs text-green-700 mt-2">
+                                  ✓ Zero tariffs ✓ Fast delivery ✓ High logistics score
+                                </p>
+                              </div>
+
+                              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                <h5 className="font-semibold text-blue-900 mb-2">International Options</h5>
+                                {relevantSuppliers.filter(s => !s.isDomestic).slice(0, 2).map(supplier => (
+                                  <div key={supplier.id} className="mb-2 last:mb-0">
+                                    <p className="text-sm font-medium">{supplier.supplierName}</p>
+                                    <div className="flex justify-between text-xs text-gray-600">
+                                      <span>Logistics: {supplier.logisticsScore}/100</span>
+                                      <span>Margin: {supplier.marginChange > 0 ? '+' : ''}{supplier.marginChange.toFixed(1)}%</span>
+                                    </div>
+                                  </div>
+                                ))}
+                                <p className="text-xs text-blue-700 mt-2">
+                                  ⚠️ Higher tariffs ⚠️ Longer transit ⚠️ Lower logistics score
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 bg-white rounded-lg p-3 border border-gray-200">
+                            <h6 className="font-medium text-gray-900 mb-2">Cost Analysis Summary</h6>
+                            <div className="grid grid-cols-3 gap-4 text-sm">
+                              <div>
+                                <span className="text-gray-500">Current Total Cost:</span>
+                                <p className="font-medium">${(sku.spend / 1000000).toFixed(1)}M annually</p>
+                              </div>
+                              <div>
+                                <span className="text-gray-500">Potential Savings:</span>
+                                <p className="font-medium text-green-600">
+                                  {formatCurrency(Math.max(...relevantSuppliers.map(s => calculateAnnualSavings(s))))}
+                                </p>
+                              </div>
+                              <div>
+                                <span className="text-gray-500">Risk Reduction:</span>
+                                <p className="font-medium text-blue-600">
+                                  {sku.totalRisk - 25} points (to {25})
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </>
                   ) : (
                     <div className="text-center py-12">
